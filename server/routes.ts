@@ -48,7 +48,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const matchScores = matchProblemToResearchers(
-        validatedData.description,
+        problem,
         researchers,
         5
       );

@@ -8,6 +8,7 @@ import Home from "@/pages/home";
 import SubmitProblem from "@/pages/submit-problem";
 import MatchResults from "@/pages/match-results";
 import Researchers from "@/pages/researchers";
+import RegisterResearcher from "@/pages/register-researcher";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -17,6 +18,7 @@ function Router() {
       <Route path="/submit-problem" component={SubmitProblem} />
       <Route path="/matches/:id" component={MatchResults} />
       <Route path="/researchers" component={Researchers} />
+      <Route path="/register-researcher" component={RegisterResearcher} />
       <Route component={NotFound} />
     </Switch>
   );

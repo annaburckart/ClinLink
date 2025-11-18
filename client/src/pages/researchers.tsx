@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Search, Mail, Building2 } from "lucide-react";
+import { Search, Mail, Building2, UserPlus, Users } from "lucide-react";
 import type { Researcher } from "@shared/schema";
 
 function ResearcherDirectoryCard({ researcher }: { researcher: Researcher }) {
@@ -31,11 +32,15 @@ function ResearcherDirectoryCard({ researcher }: { researcher: Researcher }) {
               {researcher.name}
             </CardTitle>
             {researcher.institution && (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
                 <Building2 className="h-4 w-4 flex-shrink-0" />
                 <span className="break-words">{researcher.institution}</span>
               </div>
             )}
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Users className="h-4 w-4 flex-shrink-0" />
+              <span>Capacity: {researcher.capacity} {researcher.capacity === 1 ? 'project' : 'projects'}</span>
+            </div>
           </div>
         </div>
       </CardHeader>
@@ -92,11 +97,19 @@ export default function Researchers() {
   return (
     <div className="min-h-screen py-12 px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">Research Directory</h1>
-          <p className="text-lg text-muted-foreground">
-            Browse our network of researchers and their areas of expertise
-          </p>
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">Research Directory</h1>
+            <p className="text-lg text-muted-foreground">
+              Browse our network of researchers and their areas of expertise
+            </p>
+          </div>
+          <Link href="/register-researcher">
+            <Button size="lg" className="gap-2" data-testid="button-register-researcher">
+              <UserPlus className="h-4 w-4" />
+              Register as Researcher
+            </Button>
+          </Link>
         </div>
 
         <div className="mb-8">

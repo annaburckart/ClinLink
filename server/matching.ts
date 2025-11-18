@@ -1,5 +1,5 @@
 import natural from 'natural';
-import type { Researcher } from '@shared/schema';
+import type { Researcher, ClinicianProblem } from '@shared/schema';
 
 const TfIdf = natural.TfIdf;
 const tokenizer = new natural.WordTokenizer();
@@ -10,7 +10,7 @@ export interface MatchScore {
 }
 
 export function matchProblemToResearchers(
-  problemDescription: string,
+  problem: ClinicianProblem,
   researchers: Researcher[],
   topN: number = 5
 ): MatchScore[] {
@@ -20,7 +20,9 @@ export function matchProblemToResearchers(
 
   const tfidf = new TfIdf();
   
-  tfidf.addDocument(problemDescription.toLowerCase());
+  const problemKeywords = problem.keywords.map(k => k.toLowerCase()).join(' ');
+  const problemText = `${problem.title.toLowerCase()} ${problem.domain.toLowerCase()} ${problemKeywords} ${problem.description.toLowerCase()}`;
+  tfidf.addDocument(problemText);
   
   researchers.forEach(researcher => {
     const keywords = researcher.keywords.map(k => k.toLowerCase()).join(' ');
@@ -29,7 +31,7 @@ export function matchProblemToResearchers(
   });
 
   const scores: MatchScore[] = [];
-  const problemTerms = tokenizer.tokenize(problemDescription.toLowerCase()) || [];
+  const problemTerms = tokenizer.tokenize(problemText) || [];
   
   if (problemTerms.length === 0) {
     return researchers.slice(0, topN).map((r, idx) => ({

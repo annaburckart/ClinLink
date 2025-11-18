@@ -20,28 +20,16 @@ export default function Home() {
           <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
             Submit your healthcare challenge and discover leading researchers who can help drive evidence-based solutions
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/submit-problem">
-              <Button 
-                size="lg" 
-                className="w-full sm:w-auto backdrop-blur-md bg-primary/90 hover:bg-primary border border-primary-border"
-                data-testid="button-submit-hero"
-              >
-                Submit a Problem
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-            <Link href="/researchers">
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="w-full sm:w-auto backdrop-blur-md bg-background/10 hover:bg-background/20 text-white border-white/30"
-                data-testid="button-browse-hero"
-              >
-                Browse Researchers
-              </Button>
-            </Link>
-          </div>
+          <Link href="/submit-problem">
+            <Button 
+              size="lg" 
+              className="backdrop-blur-md bg-primary/90 hover:bg-primary border border-primary-border"
+              data-testid="button-submit-hero"
+            >
+              Submit a Problem
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
         </div>
       </div>
 

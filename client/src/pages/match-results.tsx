@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Mail, Building2, Award } from "lucide-react";
+import { ArrowLeft, Mail, Building2, Award, Users } from "lucide-react";
 import type { ProblemWithMatches } from "@shared/schema";
 
 function MatchScoreBadge({ score }: { score: number }) {
@@ -43,11 +43,15 @@ function ResearcherCard({ researcher, score, rank }: { researcher: any; score: n
               {researcher.name}
             </CardTitle>
             {researcher.institution && (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
                 <Building2 className="h-4 w-4 flex-shrink-0" />
                 <span className="break-words">{researcher.institution}</span>
               </div>
             )}
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+              <Users className="h-4 w-4 flex-shrink-0" />
+              <span>Capacity: {researcher.capacity} {researcher.capacity === 1 ? 'project' : 'projects'}</span>
+            </div>
           </div>
           <div className="flex-shrink-0">
             <MatchScoreBadge score={score} />
@@ -150,8 +154,20 @@ export default function MatchResults() {
 
         <Card className="mb-8 border-card-border">
           <CardHeader>
-            <CardTitle className="text-2xl">Your Clinical Challenge</CardTitle>
-            <CardDescription className="text-base leading-relaxed pt-2" data-testid="text-problem-description">
+            <CardTitle className="text-2xl mb-2" data-testid="text-problem-title">
+              {data.problem.title}
+            </CardTitle>
+            <div className="flex flex-wrap gap-2 mb-4">
+              <Badge variant="outline" className="rounded-full px-3 py-1">
+                {data.problem.domain}
+              </Badge>
+              {data.problem.keywords.map((keyword, idx) => (
+                <Badge key={idx} variant="secondary" className="rounded-full px-3 py-1">
+                  {keyword}
+                </Badge>
+              ))}
+            </div>
+            <CardDescription className="text-base leading-relaxed" data-testid="text-problem-description">
               {data.problem.description}
             </CardDescription>
           </CardHeader>

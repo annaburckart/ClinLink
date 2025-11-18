@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, timestamp, real } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, timestamp, real, integer } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -10,11 +10,15 @@ export const researchers = pgTable("researchers", {
   institution: text("institution"),
   keywords: text("keywords").array().notNull(),
   description: text("description").notNull(),
+  capacity: integer("capacity").notNull().default(1),
 });
 
 export const clinicianProblems = pgTable("clinician_problems", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
   description: text("description").notNull(),
+  domain: text("domain").notNull(),
+  keywords: text("keywords").array().notNull(),
   submittedAt: timestamp("submitted_at").notNull().defaultNow(),
 });
 
