@@ -37,14 +37,16 @@ Preferred communication style: Simple, everyday language.
 
 ### Data Storage
 
-**Database**: PostgreSQL configured via Drizzle ORM with Neon serverless driver. Schema supports three main tables:
-- `researchers` - Researcher profiles with array of keywords
-- `clinician_problems` - Submitted clinical challenges with timestamps
+**Database**: PostgreSQL database provided by Replit, configured via Drizzle ORM with Neon serverless driver. All data persists between server restarts.
+
+**Schema**: Three main tables with UUID primary keys:
+- `researchers` - Researcher profiles with array of keywords, capacity field (1-20 projects)
+- `clinician_problems` - Submitted clinical challenges with title, domain, keywords, description, and timestamps
 - `matches` - Junction table linking problems to researchers with scores and rankings
 
-**Current Implementation**: In-memory storage (MemStorage class) used for development/demonstration with seeded researcher data. Production-ready database schema defined but not actively used in current implementation.
+**Current Implementation**: DbStorage class implements IStorage interface using Drizzle ORM for all database operations. Database connection configured with WebSocket support (ws library) and secure WebSocket transport. Initial seeding script (`seed-database.ts`) populates database with 8 pre-configured researchers on first run.
 
-**ORM**: Drizzle ORM provides type-safe database access with PostgreSQL dialect. Migration files configured to output to `./migrations` directory.
+**ORM**: Drizzle ORM provides type-safe database access with PostgreSQL dialect. Migration files configured to output to `./migrations` directory. Schema changes applied via `npm run db:push`.
 
 ### Routing and Navigation
 

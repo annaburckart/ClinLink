@@ -4,9 +4,19 @@ import {
   type ClinicianProblem,
   type InsertClinicianProblem,
   type Match,
-  type MatchResult
+  type MatchResult,
+  researchers,
+  clinicianProblems,
+  matches
 } from "@shared/schema";
 import { randomUUID } from "crypto";
+import { drizzle } from "drizzle-orm/neon-serverless";
+import { Pool, neonConfig } from "@neondatabase/serverless";
+import { eq } from "drizzle-orm";
+import ws from "ws";
+
+neonConfig.webSocketConstructor = ws;
+neonConfig.useSecureWebSocket = true;
 
 export interface IStorage {
   createResearcher(researcher: InsertResearcher): Promise<Researcher>;
@@ -192,4 +202,89 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export class DbStorage implements IStorage {
+  private db;
+
+  constructor() {
+    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    this.db = drizzle(pool);
+  }
+
+  async createResearcher(insertResearcher: InsertResearcher): Promise<Researcher> {
+    const [researcher] = await this.db
+      .insert(researchers)
+      .values(insertResearcher)
+      .returning();
+    return researcher;
+  }
+
+  async getAllResearchers(): Promise<Researcher[]> {
+    return await this.db.select().from(researchers);
+  }
+
+  async getResearcherById(id: string): Promise<Researcher | undefined> {
+    const [researcher] = await this.db
+      .select()
+      .from(researchers)
+      .where(eq(researchers.id, id));
+    return researcher;
+  }
+
+  async createClinicianProblem(insertProblem: InsertClinicianProblem): Promise<ClinicianProblem> {
+    const [problem] = await this.db
+      .insert(clinicianProblems)
+      .values(insertProblem)
+      .returning();
+    return problem;
+  }
+
+  async getClinicianProblemById(id: string): Promise<ClinicianProblem | undefined> {
+    const [problem] = await this.db
+      .select()
+      .from(clinicianProblems)
+      .where(eq(clinicianProblems.id, id));
+    return problem;
+  }
+
+  async createMatches(
+    problemId: string,
+    matchData: Array<{ researcherId: string; score: number; rank: number }>
+  ): Promise<Match[]> {
+    const matchValues = matchData.map(data => ({
+      problemId,
+      researcherId: data.researcherId,
+      score: data.score,
+      rank: data.rank,
+    }));
+
+    return await this.db
+      .insert(matches)
+      .values(matchValues)
+      .returning();
+  }
+
+  async getMatchesByProblemId(problemId: string): Promise<MatchResult[]> {
+    const problemMatches = await this.db
+      .select()
+      .from(matches)
+      .where(eq(matches.problemId, problemId))
+      .orderBy(matches.rank);
+
+    const results: MatchResult[] = [];
+    
+    for (const match of problemMatches) {
+      const researcher = await this.getResearcherById(match.researcherId);
+      if (researcher) {
+        results.push({
+          researcher,
+          score: match.score,
+          rank: match.rank,
+        });
+      }
+    }
+    
+    return results;
+  }
+}
+
+export const storage = new DbStorage();
